@@ -38,4 +38,3 @@ def load_model(model_dir: str, **kwargs):
 
 def load_tokenizer(tokenizer_dir: str, **kwargs):
     return AutoTokenizer.from_pretrained(tokenizer_dir, **kwargs)
-    

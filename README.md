@@ -30,7 +30,7 @@ This repository provides the original implementation of *Machine Unlearning Six-
 - [ MUSE: Machine Unlearning Six-Way Evaluation for Language Models](#-muse-machine-unlearning-six-way-evaluation-for-language-models)
   - [Overview](#overview)
   - [Content](#content)
-  - [🛠️ Installa and \`Newstion](#️-installa-and-newstion)
+  - [🛠️ Installation](#️-installation)
     - [Conda Environment](#conda-environment)
   - [📘 Data \& Target Models](#-data--target-models)
   - [🚀 Run unlearning baselines](#-run-unlearning-baselines)
@@ -40,14 +40,14 @@ This repository provides the original implementation of *Machine Unlearning Six-
     - [`eval_model` Function](#eval_model-function)
   - [➕ Add to the Leaderboard](#-add-to-the-leaderboard)
 
-## 🛠️ Installa and `Newstion
+## 🛠️ Installation
 
 ### Conda Environment
 
 To create a conda environment for Python 3.10, run:
 ```bash
 conda env create -f environment.yml
-conda activate py310
+conda activate muse_bench
 ```
 
 ## 📘 Data & Target Models

@@ -1,8 +1,8 @@
-from .metrics.verbmem import eval as eval_verbmem
-from .metrics.privleak import eval as eval_privleak
-from .metrics.knowmem import eval as eval_knowmem
-from .utils import load_model, load_tokenizer, write_csv, read_json, write_json
-from .constants import SUPPORTED_METRICS, CORPORA, LLAMA_DIR, DEFAULT_DATA, AUC_RETRAIN
+from metrics.verbmem import eval as eval_verbmem
+from metrics.privleak import eval as eval_privleak
+from metrics.knowmem import eval as eval_knowmem
+from utils import load_model, load_tokenizer, write_csv, read_json, write_json
+from constants import SUPPORTED_METRICS, CORPORA, LLAMA_DIR, DEFAULT_DATA, AUC_RETRAIN
 
 import os
 from transformers import LlamaForCausalLM, LlamaTokenizer
@@ -12,7 +12,7 @@ from pandas import DataFrame
 
 def eval_model(
     model: LlamaForCausalLM,
-    tokenizer: LlamaTokenizer = LLAMA_DIR,
+    tokenizer: LlamaTokenizer | None = None,
     metrics: List[str] = SUPPORTED_METRICS,
     corpus: Literal['news', 'books'] | None = None,
     privleak_auc_key: str = 'forget_holdout_Min-40%',
@@ -36,9 +36,9 @@ def eval_model(
     for metric in metrics:
         if metric not in SUPPORTED_METRICS:
             raise ValueError(f"Given metric {metric} is not supported.")
-    if corpus is not None and corpus not in CORPORA:
+    if corpus and corpus not in CORPORA:
         raise ValueError(f"Invalid corpus. `corpus` should be either 'news' or 'books'.")
-    if corpus is not None:
+    if corpus:
         verbmem_forget_file = DEFAULT_DATA[corpus]['verbmem_forget_file'] if verbmem_forget_file is None else verbmem_forget_file
         privleak_forget_file = DEFAULT_DATA[corpus]['privleak_forget_file'] if privleak_forget_file is None else privleak_forget_file
         privleak_retain_file = DEFAULT_DATA[corpus]['privleak_retain_file'] if privleak_retain_file is None else privleak_retain_file
@@ -47,6 +47,8 @@ def eval_model(
         knowmem_forget_qa_icl_file = DEFAULT_DATA[corpus]['knowmem_forget_qa_icl_file'] if knowmem_forget_qa_icl_file is None else knowmem_forget_qa_icl_file
         knowmem_retain_qa_file = DEFAULT_DATA[corpus]['knowmem_retain_qa_file'] if knowmem_retain_qa_file is None else knowmem_retain_qa_file
         knowmem_retain_qa_icl_file = DEFAULT_DATA[corpus]['knowmem_retain_qa_icl_file'] if knowmem_retain_qa_icl_file is None else knowmem_retain_qa_icl_file
+    if not tokenizer:
+        tokenizer = load_tokenizer(LLAMA_DIR)
 
     out = {}
 
@@ -128,6 +130,8 @@ def load_then_eval_models(
         raise ValueError(f"`model_dirs` should be non-empty.")
     if len(model_dirs) != len(names):
         raise ValueError(f"`model_dirs` and `names` should equal in length.")
+    if len(names) != len(set(names)):
+        raise ValueError(f"Every name in `names` should be a unique identifier.")
     if out_file is not None and not out_file.endswith('.csv'):
         raise ValueError(f"The file extension of `out_file` should be '.csv'.")
 
@@ -155,4 +159,4 @@ if __name__ == '__main__':
     parser.add_argument('--out_file', type=str, required=True)
     parser.add_argument('--metrics', type=str, nargs='+', default=SUPPORTED_METRICS)
     args = parser.parse_args()
-    load_then_eval_models(**args)
+    load_then_eval_models(**vars(args))

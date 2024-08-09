@@ -38,3 +38,5 @@ for crit in ['scal', 'sust']:
         data = load_dataset(f"muse-bench/MUSE-News", crit, split=f"forget_{fold}")['text']
         write_json(data, f"data/news/{crit}/forget_{fold}.json")
         write_text("\n\n".join(data), f"data/news/{crit}/forget_{fold}.txt")
+
+print("Download complete!")

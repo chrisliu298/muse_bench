@@ -3,6 +3,7 @@ from .dataset import ForgetRetainDataset
 
 import torch
 import torch.nn.functional as F
+from accelerate import Accelerator
 from torch.cuda import device_count
 import transformers
 from transformers import Trainer, AutoModelForCausalLM
@@ -23,6 +24,20 @@ def unlearn(
 ):
     if 'gd' in loss_type:
         assert retain_data_file is not None, "Retain data must be specified for grad_diff."
+
+    training_args = transformers.TrainingArguments(
+        output_dir=out_dir,
+        per_device_train_batch_size=per_device_batch_size,
+        gradient_checkpointing=True,
+        gradient_accumulation_steps=4,
+        learning_rate=learning_rate,
+        save_strategy='epoch',  # Save every epoch
+        num_train_epochs=epochs,
+        optim='adamw_torch',
+        lr_scheduler_type='constant',
+        bf16=True,
+        report_to='none'        # Disable wandb
+    )
 
     model, tokenizer = load_model_and_tokenizer(
         model_dir,
@@ -45,18 +60,6 @@ def unlearn(
     if device_count() == 0:
         raise ValueError("Device not detected!")
 
-    training_args = transformers.TrainingArguments(
-        output_dir=out_dir,
-        per_device_train_batch_size=per_device_batch_size,
-        learning_rate=learning_rate,
-        save_strategy='epoch',  # Save every epoch
-        num_train_epochs=epochs,
-        optim='adamw_torch',
-        lr_scheduler_type='constant',
-        bf16=True,
-        report_to='none'        # Disable wandb
-    )
-
     trainer = IterativeUnlearner(
         model=model,
         ref_model=ref_model,
@@ -67,6 +70,7 @@ def unlearn(
         loss_type=loss_type
     )
     model.config.use_cache = False  # silence the warnings.
+    ref_model = Accelerator().prepare(ref_model)
     trainer.train(resume_from_checkpoint=resume_from_checkpoint)
     trainer.save_model(out_dir)
 

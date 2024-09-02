@@ -1,11 +1,11 @@
 CORPUS='news'
 
-TARGET_DIR='muse-bench/MUSE-News_target'
-LLAMA_DIR='meta-llama/Llama-2-7b-hf'
+TARGET_DIR='/mnt/data/yuhaoliu/models/hf_models/MUSE-news_target'
+LLAMA_DIR='/mnt/data/yuhaoliu/models/hf_models/Llama-2-7b-hf'
 
 CRIT='sust'
 MAX_LEN=2048
-PER_DEVICE_BATCH_SIZE=4
+PER_DEVICE_BATCH_SIZE=1
 
 # Iterative unlearning methods
 LR='1e-5'
@@ -19,7 +19,10 @@ for i in ${!STEP_ALGOS[*]}; do
     model_dir="./ckpt/$CORPUS/$algo/checkpoint-$((epoch * STEPS_PER_EPOCH))"
     for k in '2' '3' '4'; do
         out_dir="./ckpt/$CORPUS/$CRIT/$algo/$k"
-        python unlearn.py \
+        accelerate launch \
+            --use_deepspeed \
+            --deepspeed_config_file config/deepspeed_stage3.json \
+            unlearn.py \
             --algo $algo \
             --model_dir $model_dir --out_dir $out_dir \
             --data_file "../data/$CORPUS/$CRIT/forget_$k.txt" \

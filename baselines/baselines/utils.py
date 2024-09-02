@@ -93,7 +93,8 @@ def load_model(
         model_dir,
         quantization_config=quantization_config,
         torch_dtype=torch.bfloat16,
-        device_map='auto'
+        # device_map='auto'
+        attn_implementation="flash_attention_2",
     )
     return model
 

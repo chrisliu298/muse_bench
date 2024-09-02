@@ -18,7 +18,7 @@ FT_LR='1e-5'
 for algo in 'ga' 'ga_gdr' 'ga_klr' 'npo' 'npo_gdr' 'npo_klr'; do
     accelerate launch \
         --use_deepspeed \
-        --deepspeed_config_file config/deepspeed_stage3.json \
+        --deepspeed_config_file /mnt/data/yuhaoliu/code/muse_bench/baselines/config/deepspeed_stage_3.json \
         unlearn.py \
         --algo $algo \
         --model_dir $TARGET_DIR --tokenizer_dir $LLAMA_DIR \

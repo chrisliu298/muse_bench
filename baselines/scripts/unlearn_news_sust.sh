@@ -21,7 +21,7 @@ for i in ${!STEP_ALGOS[*]}; do
         out_dir="./ckpt/$CORPUS/$CRIT/$algo/$k"
         accelerate launch \
             --use_deepspeed \
-            --deepspeed_config_file config/deepspeed_stage3.json \
+            --deepspeed_config_file /mnt/data/yuhaoliu/code/muse_bench/baselines/config/deepspeed_stage_3.json \
             unlearn.py \
             --algo $algo \
             --model_dir $model_dir --out_dir $out_dir \

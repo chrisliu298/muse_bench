@@ -11,8 +11,9 @@ PER_DEVICE_BATCH_SIZE=1
 LR='1e-5'
 RETAIN="../data/$CORPUS/raw/retain1.txt"
 STEP_ALGOS=('ga' 'ga_gdr' 'ga_klr' 'npo' 'npo_gdr' 'npo_klr')
-EPOCHS=('1' '7' '10' '1' '10' '10')
-STEPS_PER_EPOCH='102'
+# EPOCHS=('1' '7' '10' '1' '10' '10')
+EPOCHS=('1' '1' '1' '1' '1' '1')
+STEPS_PER_EPOCH='120'
 for i in ${!STEP_ALGOS[*]}; do 
     algo=${STEP_ALGOS[$i]}
     epoch=${EPOCHS[$i]}

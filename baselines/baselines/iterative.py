@@ -56,6 +56,8 @@ def unlearn(
         retain_file_path=retain_data_file,
         max_len=max_len
     )
+    print(f"Dataset: {dataset}")
+    print(f"Dataset length: {len(dataset)}")
 
     if device_count() == 0:
         raise ValueError("Device not detected!")

@@ -27,7 +27,7 @@ for i in ${!STEP_ALGOS[*]}; do
             --algo $algo \
             --model_dir $model_dir --out_dir $out_dir \
             --data_file "../data/$CORPUS/$CRIT/forget_$k.txt" \
-            --epochs $epoch --lr $LR \
+            --epochs 10 --lr $LR \
             --retain_data_file $RETAIN --tokenizer_dir $LLAMA_DIR --max_len $MAX_LEN --per_device_batch_size $PER_DEVICE_BATCH_SIZE
         model_dir=$out_dir
     done
